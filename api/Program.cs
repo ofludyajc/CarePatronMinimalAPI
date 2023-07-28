@@ -43,17 +43,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Rody Dulfo 07/28/2023 - Add maps for search, create and update
 app.MapGet("/Clients/GetClients", async (IClientRepository clientRepository) 
 => await clientRepository.GetClients());
+
+app.MapGet("/Clients/SearchClient", async (IClientRepository clientRepository, string searchString)
+=> await clientRepository.SearchClients(searchString));
 
 app.MapPost("/Clients/CreateClient", async (IClientRepository clientRepository, Client client)
 => await clientRepository.CreateClient(client));
 
 app.MapPut("/Clients/UpdateClient/{ID}", async (IClientRepository clientRepository, string ID, Client client)
 => await clientRepository.UpdateClient(ID, client));
-
-app.MapGet("/Clients/SearchClient", async (IClientRepository clientRepository, string searchString)
-=> await clientRepository.SearchClients(searchString));
 
 app.UseCors();
 
