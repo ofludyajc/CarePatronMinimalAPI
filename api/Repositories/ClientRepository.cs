@@ -6,9 +6,10 @@ namespace api.Repositories
 {
     public interface IClientRepository
     {
-        Task<Client[]> Get();
-        Task Create(Client client);
-        Task Update(Client client);
+        Task<Client[]> GetClients();
+        Task CreateClient(Client client);
+        Task UpdateClient(string ID, Client client);
+        Task<List<Client>> SearchClients(string searchString);
     }
 
     public class ClientRepository : IClientRepository
@@ -24,7 +25,7 @@ namespace api.Repositories
             this.documentRepository = documentRepository;
         }
 
-        public async Task Create(Client client)
+        public async Task CreateClient(Client client)
         {
             await dataContext.AddAsync(client);
             await dataContext.SaveChangesAsync();
@@ -33,12 +34,12 @@ namespace api.Repositories
             await documentRepository.SyncDocumentsFromExternalSource(client.Email);
         }
 
-        public Task<Client[]> Get()
+        public Task<Client[]> GetClients()
         {
             return dataContext.Clients.ToArrayAsync();
         }
 
-        public async Task Update(Client client)
+        public async Task UpdateClient(string ID, Client client)
         {
             var existingClient = await dataContext.Clients.FirstOrDefaultAsync(x => x.Id == client.Id);
 
@@ -57,6 +58,17 @@ namespace api.Repositories
             existingClient.PhoneNumber = client.PhoneNumber;
 
             await dataContext.SaveChangesAsync();
+        }
+
+        public async Task<List<Client>> SearchClients(string searchString)
+        {
+            var searchedClients = new List<Client>();
+            var searchClientsByFirstName = await dataContext.Clients.Where(c => c.FirstName.ToLower().Contains(searchString.ToLower())).ToListAsync();
+            var searchClientsByLastName = await dataContext.Clients.Where(c => c.LastName.ToLower().Contains(searchString.ToLower())).ToListAsync();
+            searchedClients.AddRange(searchClientsByFirstName);
+            searchedClients.AddRange(searchClientsByLastName);
+
+            return searchedClients;
         }
     }
 }

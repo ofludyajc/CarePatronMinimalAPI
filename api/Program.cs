@@ -1,5 +1,7 @@
 ﻿using api.Data;
+using api.Models;
 using api.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,11 +43,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("/clients", async (IClientRepository clientRepository) =>
-{
-    return await clientRepository.Get();
-})
-.WithName("get clients");
+app.MapGet("/Clients/GetClients", async (IClientRepository clientRepository) 
+=> await clientRepository.GetClients());
+
+app.MapPost("/Clients/CreateClient", async (IClientRepository clientRepository, Client client)
+=> await clientRepository.CreateClient(client));
+
+app.MapPut("/Clients/UpdateClient/{ID}", async (IClientRepository clientRepository, string ID, Client client)
+=> await clientRepository.UpdateClient(ID, client));
+
+app.MapGet("/Clients/SearchClient", async (IClientRepository clientRepository, string searchString)
+=> await clientRepository.SearchClients(searchString));
 
 app.UseCors();
 
