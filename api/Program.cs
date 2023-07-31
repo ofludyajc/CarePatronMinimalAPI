@@ -1,6 +1,12 @@
-﻿using api.Data;
+﻿using api.BLL.ClientBLL;
+using api.BLL.DocumentBLL;
+using api.BLL.EmailBLL;
+using api.DAL.ClientDAL;
+using api.Data;
 using api.Models;
-using api.Repositories;
+using api.Repositories.ClientRepository;
+using api.Repositories.DocumentRepository;
+using api.Repositories.EmailRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +38,11 @@ services.AddScoped<DataSeeder>();
 services.AddScoped<IClientRepository, ClientRepository>();
 services.AddScoped<IEmailRepository, EmailRepository>();
 services.AddScoped<IDocumentRepository, DocumentRepository>();
+
+services.AddScoped<IClientBLL, ClientBLL>();
+services.AddScoped<IEmailBLL, EmailBLL>();
+services.AddScoped<IDocumentBLL, DocumentBLL>();
+services.AddScoped<IClientDAL, ClientDAL>();
 
 var app = builder.Build();
 
